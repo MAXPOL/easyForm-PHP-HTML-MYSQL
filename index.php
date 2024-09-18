@@ -8,15 +8,22 @@ $login = $_POST['login'];
 $password = $_POST['password'];
 
 $db_host = "localhost";
-$db_user = "YOU_LOGIN";
-$db_password = "YOU_PASSWORD";
-$db_base = 'YOU_DB';
-$db = new PDO("mysql:host=$db_host;dbname=$db_base", $db_user, $db_password);
+$db_user = "root";
+$db_password = "1";
+$db_base = 'user';
+$pdo = new PDO("mysql:host=$db_host;dbname=$db_base", $db_user, $db_password);
+$stmt = $pdo->prepare('SELECT id FROM users WHERE login = :login AND password = :password');
+$stmt->bindParam(':login', $login);
+$stmt->bindParam(':password', $password);
+$stmt->execute();
+$result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$data = array( 'login' => $login, 'password' => $password, 'ip' => $ip );
-$query = $db->prepare("INSERT INTO lap (login, password, ip) values (:login, :password, :ip)");
-$query->execute($data);
-echo "<script>alert(\"Извините, на сервере временные неполадки, попробуйте авторизоваться позднее. Спасибо за понимание. \");</script>";
+if ($result && isset($result['id'])) {
+echo 'YES';
+} else {
+echo 'NO';
+}
+
 }
 
 ?>
